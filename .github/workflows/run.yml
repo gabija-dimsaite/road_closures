@@ -2,7 +2,7 @@ name: Fetch Road Closures
 
 on:
   schedule:
-    - cron: "0 6 * * *"   # runs daily at 06:00 UTC
+    - cron: "0 6 * * 1"
   workflow_dispatch:       # allows manual run
 
 jobs:
