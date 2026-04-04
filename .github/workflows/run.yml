@@ -2,8 +2,14 @@ name: Fetch Road Closures
 
 on:
   schedule:
-    - cron: "0 6 * * 1"
-  workflow_dispatch:       # allows manual run
+    - cron: "0 3 * * 1"   # Monday 06:00 Lithuania (approx)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run-script:
@@ -19,15 +25,21 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install requests
 
       - name: Run script
         run: python script.py
 
-      - name: Commit results
+      - name: Commit CSV
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add road_closed.json
-          git commit -m "Update road closures" || echo "No changes"
-          git push
+
+          git add road_closed.csv
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update road closures CSV"
+            git push
+          fi
