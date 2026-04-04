@@ -1,6 +1,5 @@
 import requests
-import json
-from datetime import datetime
+import csv
 
 url = "http://restrictions.eismoinfo.lt"
 data = requests.get(url).json()
@@ -27,8 +26,10 @@ for item in data:
 
             rows.append(row)
 
-# Save to file
-with open("road_closed.json", "w", encoding="utf-8") as f:
-    json.dump(rows, f, indent=2, ensure_ascii=False)
+# Save CSV
+with open("road_closed.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+    writer.writeheader()
+    writer.writerows(rows)
 
-print(f"Saved {len(rows)} records")
+print(f"Saved {len(rows)} rows to road_closed.csv")
